@@ -4,6 +4,7 @@ import shutil
 from jinja2 import Environment, FileSystemLoader
 from string import join
 from subprocess import check_call
+from pkg_resources import resource_string
 
 def copy_file(tag, file) :
   shutil.copyfile(file, '{0}/{1}'.format(tag, file))
@@ -41,7 +42,7 @@ def write(upstream_image, writesubdirs):
     copy_file(dbd, "playbook.yml")
     
   template = Environment(
-    loader=FileSystemLoader("snippets")
+    loader=FileSystemLoader(resource_string("snippets"))
   ).get_template("Dockerfile")
   log.info("writing Dockerfile to {0}...".format(df))
   with open(df, 'w') as f:
