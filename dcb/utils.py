@@ -4,7 +4,6 @@ import shutil
 from jinja2 import Environment, FileSystemLoader
 from string import join
 from subprocess import check_call
-from pkg_resources import resource_string
 
 def copy_file(tag, file) :
   shutil.copyfile(file, '{0}/{1}'.format(tag, file))
@@ -30,7 +29,7 @@ def describe(image):
   check_call(['docker', 'image', image.name()])
 
 # writes ${OS}/Dockerfile and copies some stuff down...
-def write(upstream_image, writesubdirs):
+def write(upstream_image, writesubdirs, snippetloader, snippet):
   log = logging.getLogger("dcb.write")
   dbd = dockerbuilddir(upstream_image.tag, writesubdirs)
   df = dockerfile(upstream_image.tag, writesubdirs)
@@ -41,9 +40,7 @@ def write(upstream_image, writesubdirs):
     copy_file(dbd, "requirements.yml")
     copy_file(dbd, "playbook.yml")
     
-  template = Environment(
-    loader=FileSystemLoader(resource_string("snippets"))
-  ).get_template("Dockerfile")
+  template = Environment(loader=snippetloader).get_template(snippet)
   log.info("writing Dockerfile to {0}...".format(df))
   with open(df, 'w') as f:
     f.write(template.render({ "fq_upstream_image" : upstream_image.fq_name()}))

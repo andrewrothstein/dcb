@@ -9,7 +9,6 @@ setup(name='dcb',
       license='MIT',
       packages=['dcb'],
       install_requires=['jinja2'],
-      include_package_data=True,
       zip_safe=False,
       entry_points={
 	'console_scripts': [

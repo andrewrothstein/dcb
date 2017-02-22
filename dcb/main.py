@@ -2,6 +2,7 @@
 
 import logging
 import argparse
+from jinja2 import Environment, FileSystemLoader, PackageLoader
 
 def main() :
 
@@ -9,6 +10,17 @@ def main() :
     description='generates a bunch of Docker base containers for use testing Ansible roles'
   )
 
+  parser.add_argument(
+    '--snippetsdir',
+    help='path to the Dockerfile snippets'
+  )
+
+  parser.add_argument(
+    '--snippet',
+    default='Dockerfile.onbuild',
+    help='file name of the Dockerfile snippet'
+  )
+  
   parser.add_argument(
     '--upstreamregistry',
     default='quay.io',
@@ -180,11 +192,13 @@ def main() :
   if (args.pull):
     pull(upstream_image(args.pull))
     
+  snippetsloader = FileSystemLoader(args.snippetsdir) if args.snippetsdir else PackageLoader(__name__, 'snippets')
+     
   if (args.writeall) :
-    map(lambda tag : write(upstream_image(tag), args.writesubdirs), all_tags)
+    map(lambda tag : write(upstream_image(tag), args.writesubdirs, snippetsloader, args.snippet), all_tags)
 
   if (args.write):
-    write(upstream_image(args.write), args.writesubdirs)
+    write(upstream_image(args.write), args.writesubdirs, snippetsloader, args.snippet)
 
   if (args.buildall) :
     map(lambda tag: build(target_image(tag), args.buildenv, args.writesubdirs), all_tags)

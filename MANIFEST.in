@@ -1,1 +1,1 @@
-include snippets/*
+recursive-include dcb/snippets *
