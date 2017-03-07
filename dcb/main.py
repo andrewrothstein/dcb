@@ -7,7 +7,8 @@ from jinja2 import Environment, FileSystemLoader, PackageLoader
 def main() :
 
   parser = argparse.ArgumentParser(
-    description='generates a bunch of Docker base containers for use testing Ansible roles'
+    description='generates a bunch of Docker base containers for use testing Ansible roles',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
   )
 
   parser.add_argument(
@@ -137,7 +138,7 @@ def main() :
     nargs='*',
     default=['HTTP_PROXY', 'HTTPS_PROXY', 'FTP_PROXY', 'NO_PROXY',
              'http_proxy', 'https_proxy', 'ftp_proxy', 'no_proxy'],
-    help='list of environment variables to pass through as build args'
+    help='list of environment variables to pass through as build args if defined'
   )
   
   args = parser.parse_args()
