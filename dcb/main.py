@@ -2,6 +2,7 @@
 
 import logging
 import argparse
+from dcb import *
 from jinja2 import Environment, FileSystemLoader, PackageLoader
 
 def main() :
@@ -30,12 +31,14 @@ def main() :
   
   parser.add_argument(
     '--upstreamgroup',
-    default='andrewrothstein'
+    default='andrewrothstein',
+    help='upstream image group'
   )
 
   parser.add_argument(
     '--upstreamuser',
-    default='andrewrothstein'
+    default='andrewrothstein',
+    help='upstream user to login with. often a robot account'
   )
 
   parser.add_argument(
@@ -45,12 +48,14 @@ def main() :
 
   parser.add_argument(
     '--upstreamemail',
-    default='andrew.rothstein@gmail.com'
+    default='andrew.rothstein@gmail.com',
+    help='email address to use when logging into the upstream registry'
   )
 
   parser.add_argument(
     '--upstreamapp',
-    default='docker-ansible'
+    default='docker-ansible',
+    help='upstream container name'
   )
 
   parser.add_argument(
@@ -61,12 +66,14 @@ def main() :
   
   parser.add_argument(
     '--targetgroup',
-    default='andrewrothstein'
+    default='andrewrothstein',
+    help='target image group'
   )
 
   parser.add_argument(
     '--targetuser',
-    default='andrewrothstein'
+    default='andrewrothstein',
+    help='target user to login with. often a robot account'
   )
   
   parser.add_argument(
@@ -76,12 +83,14 @@ def main() :
 
   parser.add_argument(
     '--targetemail',
-    default='andrew.rothstein@gmail.com'
+    default='andrew.rothstein@gmail.com',
+    help='email address to use when logging into the target registry'
   )
 
   parser.add_argument(
     '--targetapp',
-    default='docker-ansible-role'
+    default='docker-ansible-role',
+    help='target container name'
   )
 
   parser.add_argument(
