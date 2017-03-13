@@ -1,3 +1,6 @@
+import logging
+from subprocess import check_call
+
 def login(registry, user, pwd, email):
   log = logging.getLogger("dcb.login")
   if pwd is not None:
