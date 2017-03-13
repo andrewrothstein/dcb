@@ -25,8 +25,7 @@ def fmt_build_args(buildenv):
   return r
       
 def describe(image):
-  log = logging.getLogger("dcb.info")
-  check_call(['docker', 'image', image.name()])
+  check_call(['docker', 'image', 'ls', image.fq_name()])
 
 # writes ${OS}/Dockerfile and copies some stuff down...
 def write(upstream_image, writesubdirs, snippetloader, snippet):
