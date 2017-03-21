@@ -5,6 +5,18 @@ from jinja2 import Environment, FileSystemLoader
 from string import join
 from subprocess import check_call
 
+def resolve_arg(arg, envname, dflt = None) :
+  return os.environ.get(envname, dflt) if arg is None else arg
+
+# descend through a list of environment variables in search of a hit...
+def resolve_arg_list(arg, envnames, dflt = None):
+  if arg is not None:
+    return arg
+  elif not envnames:
+    return dflt
+  else :
+    return os.environ.get(envnames[0], resolve_arg_list(arg, envnames[1:], dflt))
+
 def copy_file(tag, file) :
   shutil.copyfile(file, '{0}/{1}'.format(tag, file))
 
@@ -47,8 +59,11 @@ def write(upstream_image, writesubdirs, snippetloader, snippet):
 def build(target_image, buildenvs, writesubdirs):
   log = logging.getLogger("dcb.build")
   log.info("building the {0} container...".format(target_image.name()))
-  cmd = ['docker', 'build', '--rm=false'] + fmt_build_args(buildenvs) + ['-t', target_image.name(),
-                                                           dockerbuilddir(target_image.tag, writesubdirs)]
+  cmd = ['docker', 'build', '--rm=false']
+  cmd += fmt_build_args(buildenvs)
+  cmd += ['-t', target_image.name()]
+  cmd += ['-f', dockerfile(target_image.tag, writesubdirs)]
+  cmd += [dockerbuilddir(target_image.tag, writesubdirs)]
   r = check_call(cmd, shell=False)
   describe(target_image)
   return r

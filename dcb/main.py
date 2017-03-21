@@ -5,7 +5,7 @@ import argparse
 from dcb import *
 from jinja2 import Environment, FileSystemLoader, PackageLoader
 
-def main() :
+def build_parser() :
 
   parser = argparse.ArgumentParser(
     description='generates a bunch of Docker base containers for use testing Ansible roles',
@@ -22,22 +22,20 @@ def main() :
     default='Dockerfile.onbuild',
     help='file name of the Dockerfile snippet'
   )
+
+  parser.add_argument(
+    '--ci',
+    default='circleci',
+    help='CI system to based environment variable lookups from'
+  )
   
   parser.add_argument(
     '--upstreamregistry',
-    default='quay.io',
     help='upstream registry for all pull operations'
   )
   
   parser.add_argument(
-    '--upstreamgroup',
-    default='andrewrothstein',
-    help='upstream image group'
-  )
-
-  parser.add_argument(
     '--upstreamuser',
-    default='andrewrothstein',
     help='upstream user to login with. often a robot account'
   )
 
@@ -48,31 +46,33 @@ def main() :
 
   parser.add_argument(
     '--upstreamemail',
-    default='andrew.rothstein@gmail.com',
     help='email address to use when logging into the upstream registry'
   )
 
   parser.add_argument(
+    '--upstreamgroup',
+    help='upstream image group',
+    required=True
+  )
+
+  parser.add_argument(
     '--upstreamapp',
-    default='docker-ansible',
-    help='upstream container name'
+    help='upstream container name',
+    required=True
   )
 
   parser.add_argument(
     '--targetregistry',
-    default='quay.io',
     help='target registry for all push operations'
   )
   
   parser.add_argument(
     '--targetgroup',
-    default='andrewrothstein',
     help='target image group'
   )
 
   parser.add_argument(
     '--targetuser',
-    default='andrewrothstein',
     help='target user to login with. often a robot account'
   )
   
@@ -83,13 +83,11 @@ def main() :
 
   parser.add_argument(
     '--targetemail',
-    default='andrew.rothstein@gmail.com',
     help='email address to use when logging into the target registry'
   )
 
   parser.add_argument(
     '--targetapp',
-    default='docker-ansible-role',
     help='target container name'
   )
 
@@ -149,17 +147,23 @@ def main() :
              'http_proxy', 'https_proxy', 'ftp_proxy', 'no_proxy'],
     help='list of environment variables to pass through as build args if defined'
   )
-  
-  args = parser.parse_args()
 
-  login(
+  return parser
+
+def main() :
+
+  args = build_parser().parse_args()
+
+  upstreamregistry = Registry(
+    "UPSTREAM",
     args.upstreamregistry,
     args.upstreamuser,
     args.upstreampwd,
     args.upstreamemail
   )
 
-  login(
+  targetregistry = Registry(
+    "TARGET",
     args.targetregistry,
     args.targetuser,
     args.targetpwd,
@@ -167,20 +171,21 @@ def main() :
   )
   
   def upstream_image(tag):
-    return Image(
-      group=args.upstreamgroup,
-      app=args.upstreamapp,
-      registry=args.upstreamregistry,
-      tag=tag
-      )
+    return upstream_image_builder(
+      upstreamregistry,
+      args.upstreamgroup,
+      args.upstreamapp,
+      tag
+    )
 
   def target_image(tag):
-    return Image(
-      group=args.targetgroup,
-      app=args.targetapp,
-      registry=args.targetregistry,
-      tag=tag
-      )
+    return target_image_builder(
+      args.ci,
+      targetregistry,
+      args.targetgroup,
+      args.targetapp,
+      tag
+    )
   
   all_tags = [
     "ubuntu_trusty",
@@ -196,12 +201,6 @@ def main() :
     "debian_jessie",
   ]
 
-  if (args.pullall) :
-    map(lambda tag : pull(upstream_image(tag)), all_tags)
-
-  if (args.pull):
-    pull(upstream_image(args.pull))
-    
   snippetsloader = FileSystemLoader(args.snippetsdir) if args.snippetsdir else PackageLoader(__name__, 'snippets')
      
   if (args.writeall) :
@@ -210,22 +209,35 @@ def main() :
   if (args.write):
     write(upstream_image(args.write), args.writesubdirs, snippetsloader, args.snippet)
 
+  if (args.pullall or args.pull or args.buildall or args.build):
+    upstreamregistry.login()
+    
+  if (args.pullall) :
+    map(lambda tag : pull(upstream_image(tag)), all_tags)
+
+  if (args.pull):
+    pull(upstream_image(args.pull))
+    
   if (args.buildall) :
     map(lambda tag: build(target_image(tag), args.buildenv, args.writesubdirs), all_tags)
 
   if (args.build):
     build(target_image(args.build), args.buildenv, args.writesubdirs)
-    
-  if (args.pushall) :
-    map(lambda tag: push(target_image(tag)), all_tags)
 
-  if (args.push) :
-    push(target_image(args.push))
+  if (args.pushall or args.push):
+    if not targetregistry.login():
+      log.warn("not logged into target registry! skipping push!")
+    else:
+      if (args.pushall) :
+        map(lambda tag: push(target_image(tag)), all_tags)
+
+      if (args.push) :
+        push(target_image(args.push))
 
 if __name__ == '__main__' :
     logging.basicConfig(
       format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-      level=logging.INFO
+      level=logging.DEBUG
     )
 
     log = logging.getLogger("dcb.__main__")

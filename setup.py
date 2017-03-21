@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='dcb',
       version='0.0.1',
-      description='Package for building docker containers',
+      description='CLI for building Docker containers',
       url='http://github.com/andrewrothstein/dcb',
       author='Andrew Rothstein',
       author_email='andrew.rothstein@gmail.com',
