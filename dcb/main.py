@@ -150,8 +150,9 @@ def build_parser() :
 
   return parser
 
-def main() :
+def run() :
 
+  log = logging.getLogger("dcb.run")
   args = build_parser().parse_args()
 
   upstreamregistry = Registry(
@@ -234,14 +235,11 @@ def main() :
       if (args.push) :
         push(target_image(args.push))
 
-if __name__ == '__main__' :
+def main():
     logging.basicConfig(
       format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
       level=logging.DEBUG
     )
 
-    log = logging.getLogger("dcb.__main__")
-    log.info("welcome to the dcb...")
-    main()
-    log.info("exiting the dcb!")
+    run()
 
