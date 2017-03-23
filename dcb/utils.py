@@ -32,7 +32,7 @@ def dockerfile(tag, writesubdirs):
 def fmt_build_args(buildenv):
   log = logging.getLogger("dcb.fmt_build_args")
   setvars = filter(lambda e: e in os.environ, buildenv)
-  r = reduce(list.__add__, map(lambda e: ["--build-arg", e], setvars))
+  r = reduce(list.__add__, map(lambda e: ["--build-arg", e], setvars)) if setvars else []
   log.info("build args:{0}".format(r))
   return r
       
