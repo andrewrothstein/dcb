@@ -119,6 +119,13 @@ def build_parser() :
     '--writesubdirs',
     action='store_true'
   )
+
+  parser.add_argument(
+    '--copyfile',
+    nargs='*',
+    default=[],
+    help='list of files to copy into subdir when using --writesubdirs'
+  )
   
   parser.add_argument(
     '--pullall',
@@ -203,10 +210,10 @@ def run() :
   snippetsloader = FileSystemLoader(args.snippetsdir) if args.snippetsdir else PackageLoader(__name__, 'snippets')
      
   if (args.writeall) :
-    map(lambda tag : write(upstream_image(tag), args.writesubdirs, snippetsloader, args.snippet), all_tags)
+    map(lambda tag : write(upstream_image(tag), args.writesubdirs, args.copyfile, snippetsloader, args.snippet), all_tags)
 
   if (args.write):
-    write(upstream_image(args.write), args.writesubdirs, snippetsloader, args.snippet)
+    write(upstream_image(args.write), args.writesubdirs, args.copyfile, snippetsloader, args.snippet)
 
   if (args.pullall or args.pull or args.buildall or args.build):
     upstreamregistry.login()

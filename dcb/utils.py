@@ -33,7 +33,10 @@ def resolve_arg_list(arg, envnames, dflt = None):
     return os.environ.get(envnames[0], resolve_arg_list(arg, envnames[1:], dflt))
 
 def copy_file(tag, file) :
-  shutil.copyfile(file, '{0}/{1}'.format(tag, file))
+  log = logging.getLogger("dcb.copy_file")
+  target = '{0}/{1}'.format(tag, file)
+  log.debug("copying {0} to {1}...".format(file, target))
+  shutil.copyfile(file, target)
 
 def dockerbuilddir(tag, writesubdirs):
   return tag if writesubdirs else '.'
@@ -55,7 +58,7 @@ def describe(image):
   return run_it(['docker', 'images', image.fq_name()])
 
 # writes ${OS}/Dockerfile and copies some stuff down...
-def write(upstream_image, writesubdirs, snippetloader, snippet):
+def write(upstream_image, writesubdirs, copyfiles, snippetloader, snippet):
   log = logging.getLogger("dcb.write")
   dbd = dockerbuilddir(upstream_image.tag, writesubdirs)
   df = dockerfile(upstream_image.tag, writesubdirs)
@@ -63,8 +66,8 @@ def write(upstream_image, writesubdirs, snippetloader, snippet):
   if (writesubdirs):
     if (not os.path.isdir(dbd)) :
       os.mkdir(dbd)
-    copy_file(dbd, "requirements.yml")
-    copy_file(dbd, "playbook.yml")
+    for f in copyfiles:
+      copy_file(dbd, f)
     
   template = Environment(loader=snippetloader).get_template(snippet)
   log.info("writing Dockerfile to {0}...".format(df))
