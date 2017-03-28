@@ -51,14 +51,12 @@ def build_parser() :
 
   parser.add_argument(
     '--upstreamgroup',
-    help='upstream image group',
-    required=True
+    help='upstream image group'
   )
 
   parser.add_argument(
     '--upstreamapp',
-    help='upstream container name',
-    required=True
+    help='upstream container name'
   )
 
   parser.add_argument(
