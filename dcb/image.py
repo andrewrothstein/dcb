@@ -1,5 +1,4 @@
 from utils import resolve_arg_list
-from missingarg import *
 
 class Image:
   def __init__(
@@ -32,7 +31,7 @@ def raise_missingarg(msg, envlist):
 
 def upstream_image_builder(registry, group, app, tag):
   upstream_group_el = group_envlist("UPSTREAM")
-  upstream_group = resolve_arg_list(group, upstream_el)
+  upstream_group = resolve_arg_list(group, upstream_group_el)
   if not upstream_group:
     raise_missingarg("upstream group undefined", upstream_group_el)
 
@@ -68,12 +67,12 @@ def target_image_builder(cisystem, registry, group, app, tag):
   target_group_el = target_group_envlist(cisystem)
   target_group = resolve_arg_list(group, target_group_el)
   if not target_group:
-    raise MissingArgException("target group missing", target_group_el)
+    raise_missingarg("target group missing", target_group_el)
 
   target_app_el = target_app_envlist(cisystem)
   target_app = resolve_arg_list(app, target_app_el)
   if not target_app:
-    raise MissingArgException("target app missing", target_app_el)
+    raise_missingarg("target app missing", target_app_el)
 
   return Image(
     registry,
