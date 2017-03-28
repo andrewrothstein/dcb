@@ -38,12 +38,12 @@ def copy_file(tag, file) :
   log.debug("copying {0} to {1}...".format(file, target))
   shutil.copyfile(file, target)
 
-def dockerbuilddir(tag, writesubdirs):
-  return tag if writesubdirs else '.'
+def dockerbuilddir(tag, subdirs):
+  return tag if subdirs else '.'
 
-def dockerfile(tag, writesubdirs):
-  if writesubdirs:
-    return "{0}/Dockerfile".format(dockerbuilddir(tag, writesubdirs))
+def dockerfile(tag, subdirs):
+  if subdirs:
+    return "{0}/Dockerfile".format(dockerbuilddir(tag, subdirs))
   else:
     return "Dockerfile.{0}".format(tag)
 
@@ -58,12 +58,12 @@ def describe(image):
   return run_it(['docker', 'images', image.fq_name()])
 
 # writes ${OS}/Dockerfile and copies some stuff down...
-def write(upstream_image, writesubdirs, copyfiles, snippetloader, snippet):
+def write(upstream_image, subdirs, copyfiles, snippetloader, snippet):
   log = logging.getLogger("dcb.write")
-  dbd = dockerbuilddir(upstream_image.tag, writesubdirs)
-  df = dockerfile(upstream_image.tag, writesubdirs)
+  dbd = dockerbuilddir(upstream_image.tag, subdirs)
+  df = dockerfile(upstream_image.tag, subdirs)
 
-  if (writesubdirs):
+  if (subdirs):
     if (not os.path.isdir(dbd)) :
       os.mkdir(dbd)
     for f in copyfiles:
@@ -74,14 +74,14 @@ def write(upstream_image, writesubdirs, copyfiles, snippetloader, snippet):
   with open(df, 'w') as f:
     f.write(template.render({ "fq_upstream_image" : upstream_image.fq_name()}))
 
-def build(target_image, buildenvs, writesubdirs):
+def build(target_image, buildenvs, subdirs):
   log = logging.getLogger("dcb.build")
   log.info("building the {0} container...".format(target_image.name()))
   cmd = ['docker', 'build', '--rm=false']
   cmd += fmt_build_args(buildenvs)
   cmd += ['-t', target_image.name()]
-  cmd += ['-f', dockerfile(target_image.tag, writesubdirs)]
-  cmd += [dockerbuilddir(target_image.tag, writesubdirs)]
+  cmd += ['-f', dockerfile(target_image.tag, subdirs)]
+  cmd += [dockerbuilddir(target_image.tag, subdirs)]
   rc = run_it(cmd)
   describe(target_image)
   return rc

@@ -116,15 +116,16 @@ def build_parser() :
   )
 
   parser.add_argument(
-    '--writesubdirs',
-    action='store_true'
+    '--subdirs',
+    action='store_true',
+    help='assume Dockerfiles, etc. are in tag/platform based subdirectories'
   )
 
   parser.add_argument(
     '--copyfile',
     nargs='*',
     default=[],
-    help='list of files to copy into subdir when using --writesubdirs'
+    help='list of files to copy into subdir when using --write and --subdirs'
   )
   
   parser.add_argument(
@@ -210,10 +211,10 @@ def run() :
   snippetsloader = FileSystemLoader(args.snippetsdir) if args.snippetsdir else PackageLoader(__name__, 'snippets')
      
   if (args.writeall) :
-    map(lambda tag : write(upstream_image(tag), args.writesubdirs, args.copyfile, snippetsloader, args.snippet), all_tags)
+    map(lambda tag : write(upstream_image(tag), args.subdirs, args.copyfile, snippetsloader, args.snippet), all_tags)
 
   if (args.write):
-    write(upstream_image(args.write), args.writesubdirs, args.copyfile, snippetsloader, args.snippet)
+    write(upstream_image(args.write), args.subdirs, args.copyfile, snippetsloader, args.snippet)
 
   if (args.pullall or args.pull or args.buildall or args.build):
     upstreamregistry.login()
@@ -225,10 +226,10 @@ def run() :
     pull(upstream_image(args.pull))
     
   if (args.buildall) :
-    map(lambda tag: build(target_image(tag), args.buildenv, args.writesubdirs), all_tags)
+    map(lambda tag: build(target_image(tag), args.buildenv, args.subdirs), all_tags)
 
   if (args.build):
-    build(target_image(args.build), args.buildenv, args.writesubdirs)
+    build(target_image(args.build), args.buildenv, args.subdirs)
 
   if (args.pushall or args.push):
     if not targetregistry.login():

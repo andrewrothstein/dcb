@@ -4,26 +4,61 @@ from utils import resolve_arg, run_it
 class Registry:
   def __init__(self, envinfix, reg, user, pwd, email) :
     self.envinfix = envinfix
-    self.registry = resolve_arg(reg, "DCB_{0}_REGISTRY".format(envinfix), "quay.io")
-    self.user = resolve_arg(user, "DCB_{0}_USER".format(envinfix), None)
-    self.pwd = resolve_arg(pwd, "DCB_{0}_PWD".format(envinfix), None)
-    self.email = resolve_arg(email, "DCB_{0}_EMAIL".format(envinfix), None)
+    self._arg_reg = reg
+    self._arg_user = user
+    self._arg_pwd = pwd
+    self._arg_email = email
     self.logged_in = False
 
+  def registry(self) :
+    if self._registry is None:
+      self._registry = resolve_arg(
+        self._arg_reg,
+        "DCB_{0}_REGISTRY".format(self.envinfix), "quay.io"
+      )
+    return self._registry
+
+  def user(self) :
+    if self._user is None:
+      self._user = resolve_arg(
+        self._arg_user,
+        "DCB_{0}_USER".format(self.envinfix),
+        None
+        )
+    return self._user
+
+  def pwd(self) :
+    if self._pwd is None:
+      self._pwd = resolve_arg(
+        self._arg_pwd,
+        "DCB_{0}_PWD".format(self.envinfix),
+        None
+      )
+    return self._pwd
+
+  def email(self):
+    if self._email is None:
+      self._email = resolve_arg(
+        self._arg_email,
+        "DCB_{0}_EMAIL".format(self.envinfix),
+        None
+      )
+    return self._email
+  
   def login(self):
     log = logging.getLogger("dcb.login")
-    if self.user is None:
+    if self.user() is None:
       log.debug(
         "{0}: no user specified. skipping registry login.".format(
           self.envinfix
         )
       )
       return False
-    elif self.pwd is None:
+    elif self.pwd() is None:
       log.debug(
         "{0}: no password specified for {1}. skipping registry login.".format(
           self.envinfix,
-          self.user
+          self.user()
         )
       )
       return False
@@ -32,14 +67,14 @@ class Registry:
         log.info(
           "{0}: logging {1} into {2}...".format(
             self.envinfix,
-            self.user,
-            self.registry
+            self.user(),
+            self.registry()
           )
         )
-        cmd = ['docker', 'login', '-u', self.user, '-p', self.pwd]
-        if self.email:
-          cmd += ['-e', self.email]
-        cmd += [self.registry]
+        cmd = ['docker', 'login', '-u', self.user(), '-p', self.pwd()]
+        if self.email():
+          cmd += ['-e', self.email()]
+        cmd += [self.registry()]
         run_it(cmd)
         log.info("logged in")
         self.logged_in = True
@@ -47,8 +82,8 @@ class Registry:
         log.debug(
           "{0}: already logged into {1} as {2}".format(
             self.envinfix,
-            self.registry,
-            self.user
+            self.registry(),
+            self.user()
           )
         )
       return True
