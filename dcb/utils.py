@@ -1,9 +1,24 @@
 import logging
 import os
 import shutil
+import subprocess
 from jinja2 import Environment, FileSystemLoader
 from string import join
-from subprocess import check_call
+
+# inspired by http://blog.endpoint.com/2015/01/getting-realtime-output-using-python.html
+def run_it(cmd):
+  log = logging.getLogger("dcb.run_it")
+  process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE)
+  while True:
+    output = process.stdout.readline()
+    if output == '' and process.poll() is not None:
+      break
+    if output:
+      log.info(output.strip())
+  rc = process.poll()
+  if rc != 0:
+    raise subprocess.CalledProcessException(rc, cmd=cmd)
+  return rc
 
 def resolve_arg(arg, envname, dflt = None) :
   return os.environ.get(envname, dflt) if arg is None else arg
@@ -33,11 +48,11 @@ def fmt_build_args(buildenv):
   log = logging.getLogger("dcb.fmt_build_args")
   setvars = filter(lambda e: e in os.environ, buildenv)
   r = reduce(list.__add__, map(lambda e: ["--build-arg", e], setvars)) if setvars else []
-  log.info("build args:{0}".format(r))
+  log.debug("build args:{0}".format(r))
   return r
       
 def describe(image):
-  check_call(['docker', 'images', image.fq_name()])
+  return run_it(['docker', 'images', image.fq_name()])
 
 # writes ${OS}/Dockerfile and copies some stuff down...
 def write(upstream_image, writesubdirs, snippetloader, snippet):
@@ -64,29 +79,24 @@ def build(target_image, buildenvs, writesubdirs):
   cmd += ['-t', target_image.name()]
   cmd += ['-f', dockerfile(target_image.tag, writesubdirs)]
   cmd += [dockerbuilddir(target_image.tag, writesubdirs)]
-  r = check_call(cmd, shell=False)
+  rc = run_it(cmd)
   describe(target_image)
-  return r
+  return rc
+
 
 def push(target_image):
   log = logging.getLogger("dcb.push")
   log.info("tagging {0} as {1}...".format(target_image.name(), target_image.fq_name()))
-  check_call(['docker', 'tag', target_image.name(), target_image.fq_name()])
+  run_it(['docker', 'tag', target_image.name(), target_image.fq_name()])
   log.info("pushing {0}...".format(target_image.fq_name()))
-  r = check_call(['docker',
-                  'push',
-                  target_image.fq_name()],
-                 shell=False)
+  r = run_it(['docker', 'push', target_image.fq_name()])
   describe(target_image)
   return r
 
 def pull(upstream_image) :
   log = logging.getLogger("dcb.pull")
   log.info("pulling {0}...".format(upstream_image.fq_name()))
-  r = check_call(['docker',
-                  'pull',
-                  upstream_image.fq_name()],
-                 shell=False)
+  r = run_it(['docker', 'pull', upstream_image.fq_name()])
   describe(upstream_image)
   return r
 

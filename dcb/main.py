@@ -236,7 +236,7 @@ def run() :
 def main():
     logging.basicConfig(
       format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-      level=logging.DEBUG
+      level=logging.INFO
     )
 
     run()
