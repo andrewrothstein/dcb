@@ -11,8 +11,10 @@ class Image:
       tag
   ):
     self.registry = registry
+    self._group = None
     self._arg_group = group
     self._arg_group_el = group_el
+    self._app = None
     self._arg_app = app
     self._arg_app_el = app_el
     self.tag = "latest" if tag is None else tag
@@ -50,7 +52,7 @@ def app_envlist(envinfix) :
   return ["DCB_{0}_APP".format(envinfix)]
 
 def raise_missingarg(msg, envlist):
-    raise Exception("Missing Argument", msg + " [" + ",".join(envlist) + "]")
+    raise Exception("Missing Argument", msg + " considered [" + ",".join(envlist) + "] environment variables")
 
 def upstream_image_builder(registry, group, app, tag):
   return Image(
@@ -81,9 +83,9 @@ def target_app_envlist(cisystem):
 def target_image_builder(cisystem, registry, group, app, tag):
   return Image(
     registry,
-    target_group,
+    group,
     target_group_envlist(cisystem),
-    target_app,
+    app,
     target_app_envlist(cisystem),
     tag
   )

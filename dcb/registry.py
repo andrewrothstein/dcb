@@ -4,19 +4,23 @@ from utils import resolve_arg, run_it
 class Registry:
   def __init__(self, envinfix, reg, user, pwd, email) :
     self.envinfix = envinfix
+    self._reg = None
     self._arg_reg = reg
+    self._user = None
     self._arg_user = user
+    self._pwd = None
     self._arg_pwd = pwd
+    self._email = None
     self._arg_email = email
     self.logged_in = False
 
   def registry(self) :
-    if self._registry is None:
-      self._registry = resolve_arg(
+    if self._reg is None:
+      self._reg = resolve_arg(
         self._arg_reg,
         "DCB_{0}_REGISTRY".format(self.envinfix), "quay.io"
       )
-    return self._registry
+    return self._reg
 
   def user(self) :
     if self._user is None:
