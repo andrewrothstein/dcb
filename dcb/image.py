@@ -57,9 +57,9 @@ def raise_missingarg(msg, envlist):
 def upstream_image_builder(registry, group, app, tag):
   return Image(
     registry,
-    upstream_group,
+    group,
     group_envlist(registry.envinfix),
-    upstream_app,
+    app,
     app_envlist(registry.envinfix),
     tag
   )
