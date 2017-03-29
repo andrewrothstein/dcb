@@ -2,7 +2,8 @@ import logging
 import os
 import shutil
 import subprocess
-from jinja2 import Environment, FileSystemLoader
+from dcbenvironment import DCBEnvironment
+from jinja2 import FileSystemLoader
 from string import join
 
 # inspired by http://blog.endpoint.com/2015/01/getting-realtime-output-using-python.html
@@ -69,7 +70,7 @@ def write(upstream_image, subdirs, copyfiles, snippetloader, snippet):
     for f in copyfiles:
       copy_file(dbd, f)
     
-  template = Environment(loader=snippetloader).get_template(snippet)
+  template = DCBEnvironment(loader=snippetloader).get_template(snippet)
   log.info("writing Dockerfile to {0}...".format(df))
   with open(df, 'w') as f:
     f.write(template.render({ "fq_upstream_image" : upstream_image.fq_name()}))
