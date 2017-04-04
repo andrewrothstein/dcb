@@ -1,0 +1,7 @@
+ENV PLAYBOOK_DIR=/playbook-{{ genid(16) }}
+RUN mkdir -p $PLAYBOOK_DIR
+WORKDIR $PLAYBOOK_DIR
+COPY requirements.yml requirements.yml
+RUN ansible-galaxy install -r requirements.yml
+COPY playbook.yml playbook.yml
+RUN ansible-playbook playbook.yml

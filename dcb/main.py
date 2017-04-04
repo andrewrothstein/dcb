@@ -14,13 +14,16 @@ def build_parser() :
 
   parser.add_argument(
     '--snippetsdir',
-    help='path to the Dockerfile snippets'
+    nargs='*',
+    default=[],
+    help='paths to the Dockerfile snippets to consider'
   )
 
   parser.add_argument(
     '--snippet',
-    default='Dockerfile.onbuild',
-    help='file name of the Dockerfile snippet'
+    nargs='*',
+    default=['from.j2'],
+    help='name of the Dockerfile snippets to concatenate'
   )
 
   parser.add_argument(
@@ -208,8 +211,11 @@ def run() :
     "debian_jessie",
   ]
 
-  snippetsloader = FileSystemLoader(args.snippetsdir) if args.snippetsdir else PackageLoader(__name__, 'snippets')
-     
+  sloaders = [ PackageLoader(__name__, 'snippets') ]
+  for sd in args.snippetsdir:
+    sloaders += [ FileSystemLoader(sd) ]
+  snippetsloader = CompoundLoader(sloaders)
+  
   if (args.writeall) :
     map(lambda tag : write(upstream_image(tag), args.subdirs, args.copyfile, snippetsloader, args.snippet), all_tags)
 

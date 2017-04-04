@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 from dcbenvironment import DCBEnvironment
+from compoundloader import CompoundLoader
 from jinja2 import FileSystemLoader
 from string import join
 
@@ -58,8 +59,16 @@ def fmt_build_args(buildenv):
 def describe(image):
   return run_it(['docker', 'images', image.fq_name()])
 
+def resolve_templates(snippets, snippetloader):
+  def resolve(snippets, env):
+    if len(snippets) == 0:
+      return []
+    else:
+      return [env.get_template(snippets[0])] + resolve(snippets[1:], env)
+  return resolve(snippets, DCBEnvironment(loader=snippetloader))
+
 # writes ${OS}/Dockerfile and copies some stuff down...
-def write(upstream_image, subdirs, copyfiles, snippetloader, snippet):
+def write(upstream_image, subdirs, copyfiles, snippetloader, snippets):
   log = logging.getLogger("dcb.write")
   dbd = dockerbuilddir(upstream_image.tag, subdirs)
   df = dockerfile(upstream_image.tag, subdirs)
@@ -70,10 +79,12 @@ def write(upstream_image, subdirs, copyfiles, snippetloader, snippet):
     for f in copyfiles:
       copy_file(dbd, f)
     
-  template = DCBEnvironment(loader=snippetloader).get_template(snippet)
-  log.info("writing Dockerfile to {0}...".format(df))
+  templates = resolve_templates(snippets, snippetloader)
+  log.info("processing {0} templates to Dockerfile to {0}...".format(len(templates), df))
   with open(df, 'w') as f:
-    f.write(template.render({ "fq_upstream_image" : upstream_image.fq_name()}))
+    for t in templates:
+      f.write(t.render({ "fq_upstream_image" : upstream_image.fq_name()}))
+      f.write("\n")
 
 def build(target_image, buildenvs, subdirs):
   log = logging.getLogger("dcb.build")
