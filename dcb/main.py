@@ -237,11 +237,7 @@ def run() :
     pull(upstream_image(args.pull))
     
   if (args.buildall) :
-<<<<<<< f3d0ec3e86ab1a406b83431d3d106a5bb2e219c4
-    map(lambda tag: build(target_image(tag), args.buildenv, args.subdirs), all_tags)
-=======
-    map(lambda tag: build(target_image(tag), args.buildenv, args.writesubdirs), args.alltags)
->>>>>>> parameterize --alltags
+    map(lambda tag: build(target_image(tag), args.buildenv, args.subdirs), args.alltags)
 
   if (args.build):
     build(target_image(args.build), args.buildenv, args.subdirs)
