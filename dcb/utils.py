@@ -19,7 +19,7 @@ def run_it(cmd):
       log.info(output.strip())
   rc = process.poll()
   if rc != 0:
-    raise subprocess.CalledProcessException(rc, cmd=cmd)
+    raise subprocess.CalledProcessError(rc, cmd=cmd)
   return rc
 
 def resolve_arg(arg, envname, dflt = None) :
