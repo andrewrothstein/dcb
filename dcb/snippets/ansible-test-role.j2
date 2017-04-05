@@ -1,0 +1,8 @@
+ENV TEST_PLAYBOOK_DIR=/test-playbook-{{ genid(16) }}
+RUN mkdir -p $TEST_PLAYBOOK_DIR
+ADD . $TEST_PLAYBOOK_DIR
+WORKDIR $TEST_PLAYBOOK_DIR
+RUN if [ -f requirements.yml ]; then ansible-galaxy install -r requirements.yml; fi
+RUN if [ -f test-requirements.yml ]; then ansible-galaxy install -r test-requirements.yml; fi
+RUN if [ -f test-inventory.ini ]; then ansible-playbook -i test-inventory.ini test.yml; else ansible-playbook test.yml; fi
+
