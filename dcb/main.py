@@ -157,6 +157,25 @@ def build_parser() :
     help='list of environment variables to pass through as build args if defined'
   )
 
+  parser.add_argument(
+    '--alltags',
+    nargs='*',
+    default=[
+      "ubuntu_trusty",
+      "ubuntu_xenial",
+      "fedora_23",
+      "fedora_24",
+      "fedora_25",
+      "centos_7",
+      "alpine_3.3",
+      "alpine_3.4",
+      "alpine_3.5",
+      "alpine_edge",
+      "debian_jessie",
+    ],
+    help='set of all platforms for the --{write,pull,build}all options'
+  )
+
   return parser
 
 def run() :
@@ -197,27 +216,13 @@ def run() :
       tag
     )
   
-  all_tags = [
-    "ubuntu_trusty",
-    "ubuntu_xenial",
-    "fedora_23",
-    "fedora_24",
-    "fedora_25",
-    "centos_7",
-    "alpine_3.3",
-    "alpine_3.4",
-    "alpine_3.5",
-    "alpine_edge",
-    "debian_jessie",
-  ]
-
   sloaders = [ PackageLoader(__name__, 'snippets') ]
   for sd in args.snippetsdir:
     sloaders += [ FileSystemLoader(sd) ]
   snippetsloader = CompoundLoader(sloaders)
   
   if (args.writeall) :
-    map(lambda tag : write(upstream_image(tag), args.subdirs, args.copyfile, snippetsloader, args.snippet), all_tags)
+    map(lambda tag : write(upstream_image(tag), args.subdirs, args.copyfile, snippetsloader, args.snippet), args.alltags)
 
   if (args.write):
     write(upstream_image(args.write), args.subdirs, args.copyfile, snippetsloader, args.snippet)
@@ -226,13 +231,17 @@ def run() :
     upstreamregistry.login()
     
   if (args.pullall) :
-    map(lambda tag : pull(upstream_image(tag)), all_tags)
+    map(lambda tag : pull(upstream_image(tag)), args.alltags)
 
   if (args.pull):
     pull(upstream_image(args.pull))
     
   if (args.buildall) :
+<<<<<<< f3d0ec3e86ab1a406b83431d3d106a5bb2e219c4
     map(lambda tag: build(target_image(tag), args.buildenv, args.subdirs), all_tags)
+=======
+    map(lambda tag: build(target_image(tag), args.buildenv, args.writesubdirs), args.alltags)
+>>>>>>> parameterize --alltags
 
   if (args.build):
     build(target_image(args.build), args.buildenv, args.subdirs)
@@ -242,7 +251,7 @@ def run() :
       log.warn("not logged into target registry! skipping push!")
     else:
       if (args.pushall) :
-        map(lambda tag: push(target_image(tag)), all_tags)
+        map(lambda tag: push(target_image(tag)), args.alltags)
 
       if (args.push) :
         push(target_image(args.push))
