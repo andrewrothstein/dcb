@@ -220,37 +220,49 @@ def run() :
   for sd in args.snippetsdir:
     sloaders += [ FileSystemLoader(sd) ]
   snippetsloader = CompoundLoader(sloaders)
+
+  # for --buildall --build foo yield: [x, ..., foo]
+  def which_tags(inclevery, every, mine):
+    x = every if inclevery else []
+    if mine:
+      x += [mine]
+    return x
+
+  def any_tags(inclevery, every, mine):
+    return mine or (inclevery and every)
   
-  if (args.writeall) :
-    map(lambda tag : write(upstream_image(tag), args.subdirs, args.copyfile, snippetsloader, args.snippet), args.alltags)
-
-  if (args.write):
-    write(upstream_image(args.write), args.subdirs, args.copyfile, snippetsloader, args.snippet)
-
-  if (args.pullall or args.pull or args.buildall or args.build):
+  map(
+    lambda tag : write(
+      upstream_image(tag),
+      args.subdirs,
+      args.copyfile,
+      snippetsloader,
+      args.snippet),
+    which_tags(args.writeall, args.alltags, args.write)
+  )
+  
+  if (any_tags(args.pullall, args.alltags, args.pull)
+      or any_tags(args.buildall, args.alltags, args.build)):
     upstreamregistry.login()
-    
-  if (args.pullall) :
-    map(lambda tag : pull(upstream_image(tag)), args.alltags)
 
-  if (args.pull):
-    pull(upstream_image(args.pull))
-    
-  if (args.buildall) :
-    map(lambda tag: build(target_image(tag), args.buildenv, args.subdirs), args.alltags)
+  map(
+    lambda tag : pull(upstream_image(tag)),
+    which_tags(args.pullall, args.alltags, args.pull)
+  )
 
-  if (args.build):
-    build(target_image(args.build), args.buildenv, args.subdirs)
+  map(
+    lambda tag: build(target_image(tag), args.buildenv, args.subdirs),
+    which_tags(args.buildall, args.alltags, args.build)
+  )
 
-  if (args.pushall or args.push):
+  if (any_tags(args.pushall, args.alltags, args.push)):
     if not targetregistry.login():
       log.warn("not logged into target registry! skipping push!")
     else:
-      if (args.pushall) :
-        map(lambda tag: push(target_image(tag)), args.alltags)
-
-      if (args.push) :
-        push(target_image(args.push))
+      map(
+	lambda tag: push(target_image(tag)),
+	which_tags(args.pushall, args.alltags, args.push)
+      )
 
 def main():
     logging.basicConfig(

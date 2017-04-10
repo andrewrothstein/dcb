@@ -83,7 +83,11 @@ def write(upstream_image, subdirs, copyfiles, snippetloader, snippets):
   log.info("processing {0} templates to Dockerfile to {0}...".format(len(templates), df))
   with open(df, 'w') as f:
     for t in templates:
-      f.write(t.render({ "fq_upstream_image" : upstream_image.fq_name()}))
+      f.write(
+	t.render({
+	  "fq_upstream_image" : upstream_image.fq_name()
+	})
+      )
       f.write("\n")
 
 def build(target_image, buildenvs, subdirs):
