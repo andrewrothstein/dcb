@@ -78,6 +78,8 @@ def target_app_envlist(cisystem):
     l.append("CIRCLE_PROJECT_REPONAME")
   elif (cisystem == "gitlabci"):
     l.append("CI_PROJECT_NAME")
+  elif (cisystem == "semaphoreci"):
+    l.append("SEMAPHORE_PROJECT_NAME")
   return l
 
 def target_image_builder(cisystem, registry, group, app, tag):
