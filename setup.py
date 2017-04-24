@@ -7,9 +7,11 @@ setup(name='dcb',
       author='Andrew Rothstein',
       author_email='andrew.rothstein@gmail.com',
       license='MIT',
-      packages=['dcb'],
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
       package_data={"dcb": ["snippets/*"]},
       install_requires=['jinja2'],
+      test_requires=['nose2'],
       zip_safe=False,
       entry_points={
 	'console_scripts': [
