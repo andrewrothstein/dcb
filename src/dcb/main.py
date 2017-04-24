@@ -209,7 +209,6 @@ def run() :
 
   def target_image(tag):
     return target_image_builder(
-      args.ci,
       targetregistry,
       args.targetgroup,
       args.targetapp,

@@ -2,7 +2,7 @@ import os
 
 class Setting:
   def __init__(self, name):
-    self._name = name
+    self.name = name
 
   def get(self, dflt=None):
     return dflt
@@ -18,7 +18,7 @@ class LiteralSetting(Setting):
 class EnvSetting(Setting):
   @staticmethod
   def create(env, kind, sep='_', prefix="DCB") :
-    return EnvSetting(sep.join([prefix, env, kind]))
+    return EnvSetting(sep.join([prefix, env, kind] if env else [prefix, kind]))
   
   def __init__(self, envkey):
     Setting.__init__(self, "Env[{0}]".format(envkey))
@@ -58,8 +58,11 @@ class ProjectFromSlugSetting(Setting):
     return self._s.get(dflt=dflt)
   
 def resolveSetting(settingsList, dflt=None):
-  if settingsList is None:
-    return dflt
-  else:
+  if settingsList:
     r = settingsList[0].get(dflt=dflt)
-    return r if r is not None else resolve(settingsList[1:], dflt=dflt)
+    return r if r else resolveSetting(settingsList[1:], dflt=dflt)
+  else:
+    return dflt
+
+def summarizeSettings(settingsList) :
+  '[{0}]'.format(','.join(map(lambda x: x.name, settingsList)))

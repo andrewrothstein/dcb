@@ -1,94 +1,72 @@
-from utils import resolve_arg_list
+from setting import *
 
 class Image:
   def __init__(
       self,
       registry,
-      group,
-      group_el,
-      app,
-      app_el,
+      group_settings,
+      app_settings,
       tag
   ):
     self.registry = registry
-    self._group = None
-    self._arg_group = group
-    self._arg_group_el = group_el
-    self._app = None
-    self._arg_app = app
-    self._arg_app_el = app_el
+    self.group = resolveSetting(group_settings)
+    if not self.group:
+      raise_missingarg(
+	"{0} group undefined".format(self.registry.envinfix),
+	group_settings
+      )
+    self.app = resolveSetting(app_settings)
+    if not self.app:
+      raise_missingarg(
+        "{0} app undefined".format(self.registry.envinfix),
+        app_settings
+      )
     self.tag = "latest" if tag is None else tag
 
-  def group(self) :
-    if self._group is None:
-      self._group = resolve_arg_list(self._arg_group, self._arg_group_el)
-      if self._group is None:
-        raise_missingarg(
-          "{0} group undefined".format(self.registry.envinfix),
-          self._arg_group_el
-          )
-    return self._group
-  
-  def app(self) :
-    if self._app is None:
-      self._app = resolve_arg_list(self._arg_app, self._arg_app_el)
-      if self._app is None:
-        raise_missingarg(
-          "{0} app undefined".format(self.registry.envinfix),
-          self._arg_app_el
-          )
-    return self._app
-  
   def name(self):
-    return "{0}/{1}:{2}".format(self.group(), self.app(), self.tag)
+    return "{0}/{1}:{2}".format(self.group, self.app, self.tag)
 
   def fq_name(self):
-    return "{0}/{1}".format(self.registry.registry(), self.name())
+    return "{0}/{1}".format(self.registry.registry, self.name())
 
-def group_envlist(envinfix) :
-  return ["DCB_{0}_GROUP".format(envinfix)]
+def group_setting(envinfix) :
+  return [ EnvSetting.create(envinfix, 'GROUP') ]
 
-def app_envlist(envinfix) :
-  return ["DCB_{0}_APP".format(envinfix)]
+def app_setting(envinfix) :
+  return [ EnvSetting.create(envinfix, 'APP') ]
 
-def raise_missingarg(msg, envlist):
-    raise Exception("Missing Argument", msg + " considered [" + ",".join(envlist) + "] environment variables")
+def target_group_settings():
+  l = group_setting('TARGET')
+  l += [ EnvSetting('CIRCLE_PROJECT_USERNAME'),
+	 EnvSetting('CI_PROJECT_NAMESPACE'),
+	 OwnerFromSlugSetting('TRAVIS_REPO_SLUG'),
+	 OwnerFromSlugSetting('SEMAPHORE_REPO_SLUG') ]
+  return l
+
+def target_app_settings():
+  l = app_setting('TARGET')
+  l += [ EnvSetting('CIRCLE_PROJECT_REPONAME'),
+	 EnvSetting('CI_PROJECT_NAME'),
+	 ProjectFromSlugSetting('TRAVIS_REPO_SLUG'),
+	 ProjectFromSlugSetting('SEMAPHORE_REPO_SLUG') ]
+  return l
+
+def raise_missingarg(msg, settingsList):
+    raise Exception("Missing Argument", msg + "; considered " + summarizeSettings(settingsList))
 
 def upstream_image_builder(registry, group, app, tag):
   return Image(
     registry,
-    group,
-    group_envlist(registry.envinfix),
-    app,
-    app_envlist(registry.envinfix),
+    [ LiteralSetting(group) ] + group_setting(registry.envinfix),
+    [ LiteralSetting(app) ] + app_setting(registry.envinfix),
     tag
   )
 
-def target_group_envlist(cisystem):
-  l = group_envlist("TARGET")
-  if (cisystem == "circleci"):
-    l.append("CIRCLE_PROJECT_USERNAME")
-  elif (cisystem == "gitlabci"):
-    l.append("CI_PROJECT_NAMESPACE")
-  return l
-
-def target_app_envlist(cisystem):
-  l = app_envlist("TARGET")
-  if (cisystem == "circleci"):
-    l.append("CIRCLE_PROJECT_REPONAME")
-  elif (cisystem == "gitlabci"):
-    l.append("CI_PROJECT_NAME")
-  elif (cisystem == "semaphoreci"):
-    l.append("SEMAPHORE_PROJECT_NAME")
-  return l
-
-def target_image_builder(cisystem, registry, group, app, tag):
+def target_image_builder(registry, group, app, tag):
   return Image(
     registry,
-    group,
-    target_group_envlist(cisystem),
-    app,
-    target_app_envlist(cisystem),
+    [ LiteralSetting(group) ] + target_group_settings(),
+    [ LiteralSetting(app) ] + target_app_settings(),
     tag
   )
 

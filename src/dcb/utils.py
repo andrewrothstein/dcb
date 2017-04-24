@@ -22,18 +22,6 @@ def run_it(cmd):
     raise subprocess.CalledProcessError(rc, cmd=cmd)
   return rc
 
-def resolve_arg(arg, envname, dflt = None) :
-  return os.environ.get(envname, dflt) if arg is None else arg
-
-# descend through a list of environment variables in search of a hit...
-def resolve_arg_list(arg, envnames, dflt = None):
-  if arg is not None:
-    return arg
-  elif not envnames:
-    return dflt
-  else :
-    return os.environ.get(envnames[0], resolve_arg_list(arg, envnames[1:], dflt))
-
 def copy_file(tag, file) :
   log = logging.getLogger("dcb.copy_file")
   target = '{0}/{1}'.format(tag, file)
