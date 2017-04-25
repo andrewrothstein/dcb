@@ -12,6 +12,7 @@ class Registry:
       email,
       dflt_registry='quay.io'
   ) :
+    self.envinfix = envinfix
     self.registry = resolveSetting(
       [ LiteralSetting(reg),
 	EnvSetting.create(envinfix, 'REGISTRY'),

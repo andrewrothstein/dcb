@@ -56,6 +56,20 @@ class ProjectFromSlugSetting(Setting):
 
   def get(self, dflt=None):
     return self._s.get(dflt=dflt)
+
+class ParentCwdSetting(Setting):
+  def __init__(self):
+    Setting.__init__(self, "ParentCwdSetting")
+
+  def get(self, dflt=None):
+    return os.path.basename(os.path.dirname(os.getcwd()))
+
+class CwdSetting(Setting):
+  def __init__(self):
+    Setting.__init__(self, "CwdSetting")
+
+  def get(self, dflt=None):
+    return os.path.basename(os.getcwd())
   
 def resolveSetting(settingsList, dflt=None):
   if settingsList:
@@ -65,4 +79,4 @@ def resolveSetting(settingsList, dflt=None):
     return dflt
 
 def summarizeSettings(settingsList) :
-  '[{0}]'.format(','.join(map(lambda x: x.name, settingsList)))
+  return '[{0}]'.format(','.join(map(lambda x: x.name, settingsList)))
