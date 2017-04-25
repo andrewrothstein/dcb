@@ -6,6 +6,24 @@ class TestRegistry(TestCase):
 
   def test_registry(self):
 
+    self.assertEqual(
+      sanitize_registry('foo'),
+      'FOO',
+      msg='sanitize registry (uc)'
+    )
+
+    self.assertEqual(
+      sanitize_registry('quay.io'),
+      'QUAY_IO',
+      msg='sanitize registry (dot)'
+    )
+
+    self.assertEqual(
+      sanitize_registry('foo-bar'),
+      'FOO_BAR',
+      msg='sanitize registry (dash)'
+    )
+
     envinfix = 'ABC'
     xyz = 'XYZ'
     hij = 'HIJ'

@@ -2,6 +2,16 @@ import logging
 from utils import run_it
 from setting import *
 
+def sanitize_registry(r) :
+  return r.replace('-', '_').replace('.', '_').upper()
+
+def contextualize_setting(s, ty, envinfix, registry) :
+  return [
+    LiteralSetting(s),
+    EnvSetting.create([envinfix, sanitize_registry(registry), ty]),
+    EnvSetting.create([envinfix, ty])
+  ]
+
 class Registry:
   def __init__(
       self,
@@ -15,12 +25,13 @@ class Registry:
     self.envinfix = envinfix
     self.registry = resolveSetting(
       [ LiteralSetting(reg),
-	EnvSetting.create(envinfix, 'REGISTRY'),
+	EnvSetting.create([envinfix, 'REGISTRY']),
 	LiteralSetting(dflt_registry)
       ]
     )
-    self.user = resolveSetting([LiteralSetting(user), EnvSetting.create(envinfix, 'USER')])
-    self.pwd = resolveSetting([LiteralSetting(pwd), EnvSetting.create(envinfix, 'PWD')])
+    self.user = resolveSetting(contextualize_setting(user, 'USER', envinfix, self.registry))
+    self.pwd = resolveSetting(contextualize_setting(pwd, 'PWD', envinfix, self.registry))
+    self.email = resolveSetting(contextualize_setting(email, 'EMAIL', envinfix, self.registry))
     self._logged_in = False
 
   def login(self):

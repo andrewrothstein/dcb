@@ -31,10 +31,10 @@ class Image:
     return "{0}/{1}".format(self.registry.registry, self.name())
 
 def group_setting(envinfix) :
-  return [ EnvSetting.create(envinfix, 'GROUP') ]
+  return [ EnvSetting.create([envinfix, 'GROUP']) ]
 
 def app_setting(envinfix) :
-  return [ EnvSetting.create(envinfix, 'APP') ]
+  return [ EnvSetting.create([envinfix, 'APP']) ]
 
 def target_group_settings(envinfix):
   return group_setting(envinfix) + [

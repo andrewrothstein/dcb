@@ -17,8 +17,10 @@ class LiteralSetting(Setting):
     
 class EnvSetting(Setting):
   @staticmethod
-  def create(env, kind, sep='_', prefix="DCB") :
-    return EnvSetting(sep.join([prefix, env, kind] if env else [prefix, kind]))
+  def create(l, sep='_', prefix="DCB") :
+    return EnvSetting(
+      sep.join(filter(lambda x: x is not None, [prefix] + l))
+      )
   
   def __init__(self, envkey):
     Setting.__init__(self, "Env[{0}]".format(envkey))

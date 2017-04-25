@@ -20,7 +20,7 @@ class TestSetting(TestCase):
     self.assertIsNone(EnvSetting(ghi).get(), msg='EnvSetting.get dftl value')
 
     os.environ['DCB_TEST_REGISTRY'] = ghi
-    self.assertEqual(EnvSetting.create('TEST', 'REGISTRY').get(), ghi, msg='EnvSetting.create')
+    self.assertEqual(EnvSetting.create(['TEST', 'REGISTRY']).get(), ghi, msg='EnvSetting.create')
 
   def test_from_slug(self):
     o = 'andrewrothstein'
