@@ -11,7 +11,7 @@ setup(name='dcb',
       package_dir={'': 'src'},
       package_data={"dcb": ["snippets/*"]},
       install_requires=['jinja2'],
-      test_requires=['nose2'],
+      tests_require=['nose2'],
       zip_safe=False,
       entry_points={
 	'console_scripts': [
