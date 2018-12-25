@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-from jinja2 import BaseLoader, FileSystemLoader, PackageLoader
+from jinja2 import FileSystemLoader, PackageLoader
 import logging
 from dcb.registry import Registry
 from dcb.image import target_image_builder, upstream_image_builder, Image

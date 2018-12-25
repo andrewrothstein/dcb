@@ -1,26 +1,37 @@
 import logging
 import os
 import shutil
-import subprocess
+import sys
+from subprocess import PIPE, Popen
 from dcb.dcbenvironment import DCBEnvironment
 from typing import List
 from jinja2 import BaseLoader, Template
 
 
 # inspired by http://blog.endpoint.com/2015/01/getting-realtime-output-using-python.html
-def run_it(cmd: List[str]) -> int:
-    log = logging.getLogger("dcb.run_it")
-    process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE)
-    while True:
-        output = process.stdout.readline()
-        if output == '' and process.poll() is not None:
-            break
-        if output:
+# https://stackoverflow.com/questions/2715847/python-read-streaming-input-from-subprocess-communicate/17698359#17698359
+# helped with Windows support
+def run_it_py3(cmd: List[str]) -> int:
+    log = logging.getLogger("dcb.run_it_py3")
+    with Popen(cmd, shell=False, stdout=PIPE, universal_newlines=True) as p:
+        for output in p.stdout:
             log.info(output.strip())
-    rc = process.poll()
-    if rc != 0:
-        raise subprocess.CalledProcessError(rc, cmd=cmd)
-    return rc
+        p.wait()
+        return p.returncode
+
+
+def run_it_py2(cmd: List[str]) -> int:
+    log = logging.getLogger("dcb.run_it_py2")
+    p = Popen(cmd, stdout=PIPE, bufsize=1024)
+    with p.stdout:
+        for output in iter(p.stdout.readline, b''):
+            log.info(output.strip())
+    p.wait()
+    return p.returncode
+
+
+def run_it(cmd: List[str]) -> int:
+    return run_it_py3(cmd) if sys.version_info >= (3, 0) else run_it_py2(cmd)
 
 
 def copy_file(tag: str, file: str) -> None:
