@@ -5,7 +5,7 @@ import logging
 from dcb.registry import Registry
 from dcb.image import target_image_builder, upstream_image_builder, Image
 from dcb.compoundloader import CompoundLoader
-from dcb.utils import write, build, push, pull
+from dcb.image import write, build, push, pull
 
 
 def build_parser():
