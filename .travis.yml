@@ -13,8 +13,4 @@ python:
 install:
   - pip install --user -r requirements.txt
 
-jobs:
-  include:
-    - stage: unit-tests
-      name: "Unit Tests"
-      script: python -m unittest discover
+script: python -m unittest discover
