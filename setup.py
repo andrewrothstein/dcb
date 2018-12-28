@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='dcb',
-      version='0.0.15',
+      version='0.0.16',
       description='CLI for building, tagging, and publishing Docker containers',
       url='http://github.com/andrewrothstein/dcb',
       author='Andrew Rothstein',
@@ -10,6 +10,7 @@ setup(name='dcb',
       packages=find_packages('src'),
       package_dir={'': 'src'},
       package_data={"dcb": ["snippets/*"]},
+      python_requires='>=3.5',
       install_requires=['jinja2'],
       tests_require=['nose2'],
       zip_safe=False,
