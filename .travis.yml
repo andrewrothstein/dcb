@@ -16,3 +16,15 @@ install:
 
 script:
   - python -m unittest discover
+  - >-
+    dcb
+    --snippetsdir .
+    --snippet from.j2 ansible-playbook.j2
+    --upstreamgroup andrewrothstein
+    --upstreamapp docker-ansible
+    --targetregistry foo-registry.bar.test
+    --targetapp upgraded-docker-ansible
+    --pullall
+    --writeall
+    --buildall
+    --alltags alpine_latest archlinux_latest
