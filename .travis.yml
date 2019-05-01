@@ -4,25 +4,14 @@ services:
 language: python
 python:
 - 3.7
-- 3.6
-- 3.5
 install:
 - pip install -r requirements.txt
 - pip install .
 script:
 - python -m unittest discover
-- >
-  dcb
-  --snippetsdir .
-  --snippet from.j2 ansible-playbook.j2
-  --upstreamgroup andrewrothstein
-  --upstreamapp docker-ansible
-  --targetregistry foo-registry.bar.test
-  --targetapp upgraded-docker-ansible
-  --pullall
-  --writeall
-  --buildall
-  --alltags alpine_edge archlinux_latest
+- 'dcb --snippetsdir . --snippet from.j2 ansible-playbook.j2 --upstreamgroup andrewrothstein
+  --upstreamapp docker-ansible --targetregistry foo-registry.bar.test --targetapp
+  upgraded-docker-ansible --pullall --writeall --buildall --alltags alpine_edge archlinux_latest'
 deploy:
   provider: pypi
   user: andrewrothstein
@@ -30,4 +19,4 @@ deploy:
   on:
     tags: true
   password:
-    secure: Fs5Sxe8mnHY8pxosHYOgfQ15yWkzpKCmDI+01ExchEJvNPNekZV9niZdNcsmejMxWNBzSBlJn89pNLnr4yQwIrtHrwgwb9Dn1UxhVpiZtD9pOCGrkcPb/AGrQGxVlaTTkKAiRhIAvNSBj6u2sU70g3391tNstsGNGHxbWAOkIIIU0hIy4z+OI+7lGWQ13j16cjDFHmCN1kTxBtcjAXLfQvLhXitfaT8PEkhQa4bHoLILpF+cnyKGfuXAQXHnMoPDVqR83sAl/baV1IT8cj94SVjvsldp7KHvCm944nXVaBWq94j3HV0k9vMEW+iq9oBuGCmAhq86kBA6VF0QMNNWcorxJPjz5Nax3BYk1q6CdOLTWyzc2m5fZEZrnr+vc/IKUWnt6N0O0CH56pMMMoM9YXj9Mt14Y5GCFJZmvI/2tgin9wXQIzc88EETI4i9VR6n6Azt9RB33BHLg5wPP17+MmcYuiB4qyZ36t3IAmEaSLsTXfXKVx4pEg+PEg637IxRS6L3anY7qQa3DYPxAwL17i1TXOC/V3/A6MWJ4wUmVZeI4J2OU0Ow48s8wEhOIIVV3Vqo4cHaS8/rJ4p8H/EZ6n4dGzyp+qnXzVw0RUCY32FbOsJEiDiXm8zKxChFkIqiwOG+WixQFwofWOeMhAm3kNHWzbj/4Jioqd24fYuWDcQ=
+    secure: UBAnNk20rnkx/zP/2lz51+jGqQZYNs2LcJiZCiXVVrOWBupt2mxw7WQZS75GcMxkklnt2nvyRXF3S/HSKTJdEOPejdO1kKFhHrcI3Qpd7FF/+iBXaSS6oc+RWnuZdXIehzaSzmCiTxsEwPkg3un47nDg9ar8c3aXdc/GofccNkRiCoLf0e2Ddtfq2LQiSl+XbI/QrOhz01gLM+Rx2R2zi7KvPZy2aJ2l8RYE2/dmyzGI2inR3ymE0Enpgj4Onek5aIthXgi5SRmjMPwRwVun4LUtY71Ry8cWuDmr6u5RqF4MouEVWVXnMLC3y6JyxjpUxGBbFJEPfH4zjtjmitJH3FSCSTyp7pe1GLmoLctlLVvSaImdXoLetWtfueO/PI+JA2o6xD0kJrEgqQmI4oPaZKmINmp54ChOBZkl6AQlvleSrWSs0Jl3rwWa5jZ3PY4Ui3ByMxjnEQQEAxUs9vNCRPanNBwxpCx1VrKpWrZsOPcpVxffwx9JVugCI81Hx/RvMrAKVpj9jIUG1+XYCX61O5qmNOFvw92kHeXucjEf4kBKCaE+FFXE2BsUB0hQdukGmhkcfAThC3FtHFV0XBrTGXkhGPW/b/z604btfq1PIvQDEoVGQxXQ5aHoFa0YoYCe/rSN6eaK+HH96dRBC8G0whKzwgD5t+F6uNiShNezVO0=
