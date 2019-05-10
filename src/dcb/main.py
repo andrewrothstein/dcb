@@ -165,9 +165,15 @@ def build_parser():
         default=[
             "ubuntu_trusty",
             "ubuntu_xenial",
+            "ubuntu_bionic",
             "fedora_23",
             "fedora_24",
             "fedora_25",
+            "fedora_26",
+            "fedora_27",
+            "fedora_28",
+            "fedora_29",
+            "fedora_30",
             "centos_7",
             "alpine_3.3",
             "alpine_3.4",
@@ -175,8 +181,11 @@ def build_parser():
             "alpine_3.6",
             "alpine_3.7",
             "alpine_3.8",
+            "alpine_3.9",
             "alpine_edge",
+            "archlinux_latest",
             "debian_jessie",
+            "debian_stretch",
         ],
         help='set of all platforms for the --{write,pull,build}all options'
     )
