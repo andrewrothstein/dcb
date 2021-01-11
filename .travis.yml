@@ -1,9 +1,9 @@
-dist: xenial
+dist: focal
 services:
 - docker
 language: python
 python:
-- 3.7
+- 3.9
 install:
 - pip install -r requirements.txt
 - pip install .
