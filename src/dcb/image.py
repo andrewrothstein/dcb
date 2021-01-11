@@ -128,7 +128,7 @@ def describe(image: Image) -> int:
 def build(target_image: Image, build_envs: List[str], sub_dirs: bool) -> int:
     log = logging.getLogger('dcb.build')
     log.info('building the {0} container...'.format(target_image.name()))
-    cmd = ['docker', 'build', '--rm=false']
+    cmd = ['docker', 'build', '--rm=false', "--progress=plain"]
     cmd += fmt_build_args(build_envs)
     cmd += ['-t', target_image.name()]
     cmd += ['-f', dockerfile(target_image.tag, sub_dirs)]
