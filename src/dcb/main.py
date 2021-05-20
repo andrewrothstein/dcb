@@ -2,6 +2,7 @@
 import argparse
 from jinja2 import FileSystemLoader, PackageLoader
 import logging
+import os.path
 from dcb.registry import Registry
 from dcb.image import target_image_builder, upstream_image_builder, Image
 from dcb.compoundloader import CompoundLoader
@@ -230,7 +231,7 @@ def run():
         )
 
     snippets_loader = CompoundLoader(
-        [PackageLoader(__name__, 'snippets')]
+        [FileSystemLoader(os.path.join(os.path.dirname(__file__), 'snippets'))]
         + [FileSystemLoader(sd) for sd in args.snippetsdir]
     )
 
