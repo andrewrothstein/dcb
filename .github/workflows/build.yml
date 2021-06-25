@@ -1,0 +1,46 @@
+---
+name: publish to (test.)pypi.org
+
+on: push
+
+jobs:
+  build-n-publish:
+    name: build and publish to (test.)pypi.org
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: install deps
+        run: pip install -r requirements.txt
+      - name: install .
+        run: pip install .
+      - name: unit tests
+        run: python -m unittest discover
+      - name: integration test
+        run: >-
+          dcb
+          --snippetsdir .
+          --snippet from.j2 ansible-playbook.j2
+          --upstreamgroup andrewrothstein
+          --upstreamapp docker-ansible
+          --targetregistry foo-registry.bar.test
+          --targetapp upgraded-docker-ansible
+          --pullall
+          --writeall
+          --buildall
+          --alltags alpine_edge archlinux_latest'
+      - name: build a binary wheel and a source tarball
+        run: python -m build --sdist --wheel --outdir dist/
+      - name: deploy to test.pypi.org
+        uses: pypa/gh-action-pypi-publish@v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+      - name: deploy to pypi.org
+        if: startsWith(github.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
