@@ -20,8 +20,7 @@ jobs:
           python -m pip install --upgrade pip wheel
           python -m pip install -r requirements.txt
           python -m pip install .
-      - name: run unit tests
-        run: python -m unittest discover
+          python -m unittest discover
       - name: dcb integration test
         run: >-
           dcb
