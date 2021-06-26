@@ -20,6 +20,9 @@ jobs:
           python -m pip install --upgrade pip wheel
           python -m pip install -r requirements.txt
           python -m pip install .
+      - name: unit tests
+        run: |
+          . test-env/bin/activate
           python -m unittest discover
       - name: dcb integration test
         run: >-
@@ -33,7 +36,7 @@ jobs:
           --pullall
           --writeall
           --buildall
-          --alltags alpine_edge archlinux_latest'
+          --alltags alpine_edge archlinux_latest
       - name: build a binary wheel and a source tarball
         run: python -m build --sdist --wheel --outdir dist/
       - name: deploy to test.pypi.org
