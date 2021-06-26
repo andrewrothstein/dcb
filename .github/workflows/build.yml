@@ -13,13 +13,15 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.9
-      - name: install deps
-        run: pip install -r requirements.txt
-      - name: install .
-        run: pip install .
-      - name: unit tests
+      - name: create and activate test-env
+        run: |
+          python -m venv test-env
+          . test-env/bin/activate
+          python -m pip install -r requirements.txt
+          python -m pip install .
+      - name: run unit tests
         run: python -m unittest discover
-      - name: integration test
+      - name: dcb integration test
         run: >-
           dcb
           --snippetsdir .
