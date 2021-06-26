@@ -13,17 +13,9 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.9
-      - name: create and activate test-env
-        run: |
-          python -m venv test-env
-          . test-env/bin/activate
-          python -m pip install --upgrade pip wheel
-          python -m pip install -r requirements.txt
-          python -m pip install .
-      - name: unit tests
-        run: |
-          . test-env/bin/activate
-          python -m unittest discover
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install .
+      - run: python -m unittest discover
       - name: dcb integration test
         run: >-
           dcb
