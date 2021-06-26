@@ -17,6 +17,7 @@ jobs:
         run: |
           python -m venv test-env
           . test-env/bin/activate
+          python -m pip install --upgrade pip wheel
           python -m pip install -r requirements.txt
           python -m pip install .
       - name: run unit tests
