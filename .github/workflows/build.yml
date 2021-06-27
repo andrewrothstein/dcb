@@ -13,8 +13,9 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.9
-      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install build
       - run: python -m pip install .
+      - run: python -m pip install .[test]
       - run: python -m unittest discover
       - name: dcb integration test
         run: >-
@@ -29,7 +30,6 @@ jobs:
           --writeall
           --buildall
           --alltags alpine_edge archlinux_latest
-      - run: python -m pip install build
       - name: build a binary wheel and a source tarball
         run: python -m build --sdist --wheel --outdir dist/
       - name: deploy to test.pypi.org
