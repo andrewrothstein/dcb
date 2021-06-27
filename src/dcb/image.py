@@ -52,6 +52,7 @@ def target_group_settings(env_infix: str) -> List[Setting]:
         EnvSetting('CI_PROJECT_NAMESPACE'),
         OwnerFromSlugSetting('TRAVIS_REPO_SLUG'),
         OwnerFromSlugSetting('SEMAPHORE_REPO_SLUG'),
+        OwnerFromSlugSetting('GITHUB_REPOSITORY'),
         ParentCwdSetting()
     ]
 
@@ -62,6 +63,7 @@ def target_app_settings(env_infix)-> List[Setting]:
         EnvSetting('CI_PROJECT_NAME'),
         ProjectFromSlugSetting('TRAVIS_REPO_SLUG'),
         ProjectFromSlugSetting('SEMAPHORE_REPO_SLUG'),
+        ProjectFromSlugSetting('GITHUB_REPOSITORY'),
         CwdSetting()
     ]
 
