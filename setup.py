@@ -12,7 +12,9 @@ setup(name='dcb',
       package_data={"dcb": ["snippets/*"]},
       python_requires='>=3.5',
       install_requires=['jinja2'],
-      tests_require=['nose2'],
+      extras_require={
+          "test": ['nose2']
+      },
       zip_safe=False,
       entry_points={
           'console_scripts': [
