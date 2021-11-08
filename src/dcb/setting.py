@@ -87,10 +87,12 @@ class CwdSetting(Setting):
 def resolve_setting(settings: List[Setting], dflt: Union[str, None] = None) -> Union[str, None]:
     if settings:
         s = settings[0]
-        log.info('looking at a {0}'.format(summarize_settings([s])))
+        isDebugEnabled = log.isEnabledFor(logging.DEBUG)
+        if isDebugEnabled:
+            log.debug('looking at a {0}'.format(summarize_settings([s])))
         r = s.get(dflt=dflt)
-        if r:
-            log.info('got: {0}', r)
+        if r and isDebugEnabled:
+            log.debug('got: {0}', r.name)
         return r if r else resolve_setting(settings[1:], dflt=dflt)
     else:
         return dflt
