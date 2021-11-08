@@ -3,12 +3,9 @@
   roles:
     - andrewrothstein.pkg-upgrade
   tasks:
-    - name: install dcb:latest
-      pip:
-        name: dcb
-        state: latest
-    - command: dcb --version
-      register: dcb_test_output
-    - name: dcb --version
-      debug:
-        msg: '{{ dcb_test_output.stdout }}'
+    - name: upgrade pip
+      command: python -m pip install --upgrade pip
+    - name: install dcb and test dependencies
+      command: python -m pip install .[test]
+    - name: dcb unit tests
+      command: python -m unittest discover

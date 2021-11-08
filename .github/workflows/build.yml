@@ -23,7 +23,7 @@ jobs:
         run: >-
           dcb
           --snippetsdir .
-          --snippet from.j2 ansible-playbook.j2
+          --snippet from.j2 dcb-bootstrap.j2
           --upstreamgroup andrewrothstein
           --upstreamapp docker-ansible
           --pullall
