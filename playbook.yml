@@ -2,3 +2,8 @@
 - hosts: all
   roles:
     - andrewrothstein.pkg-upgrade
+  tasks:
+    - name: install dcb:latest
+      pip:
+        name: dcb
+        state: latest

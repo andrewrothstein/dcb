@@ -8,7 +8,12 @@ def sanitize_registry(r: str) -> str:
     return r.replace('-', '_').replace('.', '_').upper()
 
 
-def contextualize_setting(s: str, ty: str, env_infix: str, registry: str) -> List[Setting]:
+def contextualize_setting(
+    s: str, 
+    ty: str, 
+    env_infix: str, 
+    registry: str
+    ) -> List[Setting]:
     return [
         LiteralSetting(s),
         EnvSetting.create([env_infix, sanitize_registry(registry), ty]),
@@ -24,7 +29,7 @@ class Registry:
             user: str,
             pwd: str,
             email: str,
-            dflt_registry: str = 'quay.io'
+            dflt_registry: str = "ghcr.io"
     ):
         self.env_infix = env_infix
         self.registry = resolve_setting(
@@ -33,9 +38,26 @@ class Registry:
              LiteralSetting(dflt_registry)
              ]
         )
-        self.user = resolve_setting(contextualize_setting(user, 'USER', env_infix, self.registry))
-        self.pwd = resolve_setting(contextualize_setting(pwd, 'PWD', env_infix, self.registry))
-        self.email = resolve_setting(contextualize_setting(email, 'EMAIL', env_infix, self.registry))
+        self.user = resolve_setting(
+            [
+                EnvSetting("GITHUB_ACTOR")
+            ]
+            + contextualize_setting(
+                user, 
+                'USER', 
+                env_infix, 
+                self.registry
+                )
+            )
+        self.pwd = resolve_setting(
+            [
+                EnvSetting('GITHUB_TOKEN')
+            ]
+            + contextualize_setting(pwd, 'PWD', env_infix, self.registry)
+            )
+        self.email = resolve_setting(
+            contextualize_setting(email, 'EMAIL', env_infix, self.registry)
+            )
         self._logged_in = False
 
     def login(self) -> bool:
