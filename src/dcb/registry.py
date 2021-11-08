@@ -39,10 +39,7 @@ class Registry:
              ]
         )
         self.user = resolve_setting(
-            [
-                EnvSetting("GITHUB_ACTOR")
-            ]
-            + contextualize_setting(
+            contextualize_setting(
                 user, 
                 'USER', 
                 env_infix, 
@@ -50,13 +47,20 @@ class Registry:
                 )
             )
         self.pwd = resolve_setting(
-            [
-                EnvSetting('GITHUB_TOKEN')
-            ]
-            + contextualize_setting(pwd, 'PWD', env_infix, self.registry)
+            contextualize_setting(
+                pwd,
+                'PWD',
+                env_infix,
+                self.registry
+                )
             )
         self.email = resolve_setting(
-            contextualize_setting(email, 'EMAIL', env_infix, self.registry)
+            contextualize_setting(
+                email,
+                'EMAIL',
+                env_infix,
+                self.registry
+                )
             )
         self._logged_in = False
 
