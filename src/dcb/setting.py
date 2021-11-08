@@ -92,7 +92,7 @@ def resolve_setting(settings: List[Setting], dflt: Union[str, None] = None) -> U
             log.debug('looking at a {0}'.format(summarize_settings([s])))
         r = s.get(dflt=dflt)
         if r and isDebugEnabled:
-            log.debug('got: {0}', r.name)
+            log.debug('got: {0}', r)
         return r if r else resolve_setting(settings[1:], dflt=dflt)
     else:
         return dflt
