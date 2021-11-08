@@ -4,8 +4,8 @@
     - andrewrothstein.pkg-upgrade
   tasks:
     - name: upgrade pip
-      command: python -m pip install --upgrade pip
+      command: python3 -m pip install --upgrade pip
     - name: install dcb and test dependencies
-      command: python -m pip install .[test]
+      command: python3 -m pip install .[test]
     - name: dcb unit tests
-      command: python -m unittest discover
+      command: python3 -m unittest discover
