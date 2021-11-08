@@ -7,3 +7,8 @@
       pip:
         name: dcb
         state: latest
+    - command: dcb --version
+      register: dcb_test_output
+    - name: dcb --version
+      debug:
+        msg: '{{ dcb_test_output.stdout }}'
