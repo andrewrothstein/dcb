@@ -30,7 +30,7 @@ jobs:
           --writeall
           --buildall
           --pushall
-          --alltags alpine_edge archlinux_latest
+          --alltags alpine_edge
       - name: build a binary wheel and a source tarball
         run: |
           python -m pip install build wheel
