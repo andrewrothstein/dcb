@@ -9,3 +9,8 @@
       command: python3 -m pip install .[test]
     - name: dcb unit tests
       command: python3 -m unittest discover
+    - command: dcb --help
+      register: dcb_help
+    - name: dcb --help
+      debug:
+        msg: '{{ dcb_help.stdout }}'
