@@ -27,6 +27,7 @@ jobs:
           --upstreamregistry ghcr.io
           --upstreamgroup andrewrothstein
           --upstreamapp docker-ansible
+          --targetregistry ghcr.io
           --targetuser ${{ github.actor }}
           --targetpwd ${{ github.token }}
           --pullall
