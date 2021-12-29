@@ -1,6 +1,8 @@
 import os
+import logging
 from typing import List, Union
 
+log = logging.getLogger("dcb.settings")
 
 class Setting:
     def __init__(self, name: str):
@@ -82,10 +84,15 @@ class CwdSetting(Setting):
     def get(self, dflt=None) -> Union[str, None]:
         return os.path.basename(os.getcwd())
 
-
 def resolve_setting(settings: List[Setting], dflt: Union[str, None] = None) -> Union[str, None]:
     if settings:
-        r = settings[0].get(dflt=dflt)
+        s = settings[0]
+        isDebugEnabled = log.isEnabledFor(logging.DEBUG)
+        if isDebugEnabled:
+            log.debug('looking at a {0}'.format(summarize_settings([s])))
+        r = s.get(dflt=dflt)
+        if r and isDebugEnabled:
+            log.debug('got: {0}', r)
         return r if r else resolve_setting(settings[1:], dflt=dflt)
     else:
         return dflt

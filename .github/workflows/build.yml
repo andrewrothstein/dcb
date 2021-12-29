@@ -23,15 +23,18 @@ jobs:
         run: >-
           dcb
           --snippetsdir .
-          --snippet from.j2 ansible-playbook.j2
+          --snippet from.j2 dcb-bootstrap.j2
+          --upstreamregistry ghcr.io
           --upstreamgroup andrewrothstein
           --upstreamapp docker-ansible
-          --targetregistry foo-registry.bar.test
-          --targetapp upgraded-docker-ansible
+          --targetregistry ghcr.io
+          --targetuser ${{ github.actor }}
+          --targetpwd ${{ github.token }}
           --pullall
           --writeall
           --buildall
-          --alltags alpine_edge archlinux_latest
+          --pushall
+          --alltags alpine_edge
       - name: build a binary wheel and a source tarball
         run: |
           python -m pip install build wheel

@@ -1,0 +1,6 @@
+ENV DCB_DIR=/dcb-{{ genid(16) }}
+COPY . $DCB_DIR
+WORKDIR $DCB_DIR
+
+RUN ansible-galaxy install -r requirements.yml
+RUN ansible-playbook playbook.yml
