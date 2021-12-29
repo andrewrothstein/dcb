@@ -24,6 +24,7 @@ jobs:
           dcb
           --snippetsdir .
           --snippet from.j2 dcb-bootstrap.j2
+          --upstreamregistry ghcr.io
           --upstreamgroup andrewrothstein
           --upstreamapp docker-ansible
           --targetuser ${{ github.actor }}
