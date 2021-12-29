@@ -174,6 +174,7 @@ def build_parser():
             "fedora_34",
             "fedora_35",
             "rockylinux_8.4",
+            "rockylinux_8.5",
             "ubuntu_bionic",
             "ubuntu_focal",
         ],
