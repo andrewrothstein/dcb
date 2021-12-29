@@ -164,8 +164,8 @@ def build_parser():
         '--alltags',
         nargs='*',
         default=[
-            "alpine_3.13",
             "alpine_3.14",
+            "alpine_3.15",
             "alpine_edge",
             "archlinux_latest",
             "centos_8",
