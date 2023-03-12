@@ -23,7 +23,7 @@ jobs:
           repository: andrewrothstein/tasks
           ref: develop
           path: taskmono
-      - name: discovery python unit tests
+      - name: python unit tests
         run: task -t taskmono/python-test.yml test
       - name: dcb integration test
         run: >-
