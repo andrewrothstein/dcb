@@ -27,20 +27,14 @@ jobs:
         run: task -t taskmono/python-test.yml test
       - name: dcb integration test
         run: >-
-          dcb
-          --snippetsdir .
-          --snippet from.j2 dcb-bootstrap.j2
-          --upstreamregistry ghcr.io
-          --upstreamgroup andrewrothstein
-          --upstreamapp docker-ansible
-          --targetregistry ghcr.io
-          --targetuser ${{ github.actor }}
-          --targetpwd ${{ github.token }}
-          --pullall
-          --writeall
-          --buildall
-          --pushall
-          --alltags alpine_edge
+          task
+          -t taskmono/dcb.yml
+          snippetsdir=.
+          snippets='from.j2 dcb-bootstrap.j2'
+          targetuser='${{ github.actor }}'
+          targetpwd='${{ github.token }}'
+          pushall=true
+          alltags="alpine_edge debian_bullseye"
       - name: build python package
         run: task -t taskmono/python-test.yml build
       - name: deploy to test.pypi.org
