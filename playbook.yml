@@ -1,8 +1,8 @@
 ---
 - hosts: all
   roles:
-    - andrewrothstein.pkg-upgrade
-    - andrewrothstein.docker-binaries
+    - andrewrothstein.pkg_upgrade
+    - andrewrothstein.docker_binaries
   tasks:
     - name: upgrade pip
       command: python3 -m pip install --upgrade pip

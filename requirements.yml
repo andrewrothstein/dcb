@@ -1,3 +1,3 @@
 ---
-- role: andrewrothstein.pkg-upgrade
-- role: andrewrothstein.docker-binaries
+- role: andrewrothstein.pkg_upgrade
+- role: andrewrothstein.docker_binaries
